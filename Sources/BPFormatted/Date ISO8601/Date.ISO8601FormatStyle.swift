@@ -7,7 +7,7 @@
 
 import Foundation
 
-@available(iOS 10.0, *)
+@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension Date {
 
     /// Options for generating and parsing string representations of dates following the ISO 8601 standard.
@@ -120,7 +120,7 @@ extension Date {
     }
 }
 
-@available(iOS 10.0, *)
+@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension Date.BPISO8601FormatStyle : BPFormatStyle {
 
     private static var dateFormatter = ISO8601DateFormatter()
@@ -138,6 +138,11 @@ extension Date.BPISO8601FormatStyle : BPFormatStyle {
         options.formUnion(dateTimeSeparator.options)
         options.formUnion(timeZoneSeparator.options)
         options.formUnion(timeSeparator.options)
+        if #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
+            if includingFractionalSeconds {
+                options.formUnion(.withFractionalSeconds)
+            }
+        }
         Self.dateFormatter.formatOptions = options
         return Self.dateFormatter.string(from: value)
     }
@@ -149,7 +154,7 @@ extension Date.BPISO8601FormatStyle : BPFormatStyle {
     public typealias FormatOutput = String
 }
 
-@available(iOS 10.0, *)
+@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension Date.BPISO8601FormatStyle {
 
     public func year() -> Date.BPISO8601FormatStyle {

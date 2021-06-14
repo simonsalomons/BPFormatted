@@ -2,7 +2,7 @@ import XCTest
 @testable import BPFormatted
 
 final class BPFormattedTests: XCTestCase {
-    @available(iOS 15.0, *)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testGeneral() {
         let date = Date(timeIntervalSince1970: 1_623_225_158.123_456)
 
@@ -33,12 +33,11 @@ final class BPFormattedTests: XCTestCase {
                        date.formatted(date: .omitted, time: .complete))
 
 
-        #warning("🆘 Apple API gives a full date if both are requesting `.omitted`. Seems wrong?")
         XCTAssertEqual(date.bpFormatted(date: .omitted, time: .omitted),
                        date.formatted(date: .omitted, time: .omitted))
     }
 
-    @available(iOS 15.0, *)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testLocale() {
         let date = Date(timeIntervalSince1970: 1_623_225_158.123_456)
 
@@ -53,14 +52,14 @@ final class BPFormattedTests: XCTestCase {
                        date.formatted(.dateTime.locale(locale)))
     }
 
-    @available(iOS 15.0, *)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testInteroperability() throws {
         try assertInteroperability(.dateTime)
         try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
         try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened))
     }
 
-    @available(iOS 15.0, *)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func assertInteroperability(_ bpFormat: Date.BPFormatStyle) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
         let appleDecoded = try JSONDecoder().decode(Date.FormatStyle.self, from: bpEncoded)

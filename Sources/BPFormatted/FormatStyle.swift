@@ -35,7 +35,7 @@ extension BPFormatStyle where Self == Date.BPFormatStyle {
     }
 }
 
-@available(iOS 10.0, *)
+@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension BPFormatStyle where Self == Date.BPISO8601FormatStyle {
 
     public static var iso8601: Date.BPISO8601FormatStyle {
