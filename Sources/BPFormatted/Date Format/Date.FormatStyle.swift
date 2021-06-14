@@ -9,6 +9,10 @@ import Foundation
 
 extension Date {
 
+    @available(iOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "FormatStyle")
+    @available(macOS, deprecated: 12.0, message: "Consider using Apple's API", renamed: "FormatStyle")
+    @available(tvOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "FormatStyle")
+    @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "FormatStyle")
     /// Strategies for formatting a `Date`.
     public struct BPFormatStyle {
 
