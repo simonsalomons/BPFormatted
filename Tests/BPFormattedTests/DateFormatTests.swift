@@ -387,12 +387,59 @@ final class BPFormattedTests: XCTestCase {
         var locale = Locale(identifier: "be-NL")
         XCTAssertEqual(date.bpFormatted(.dateTime.locale(locale)),
                        date.formatted(.dateTime.locale(locale)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(locale: locale)),
+                       date.formatted(Date.FormatStyle(locale: locale)))
+
+
         locale = Locale(identifier: "en-US")
         XCTAssertEqual(date.bpFormatted(.dateTime.locale(locale)),
                        date.formatted(.dateTime.locale(locale)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(locale: locale)),
+                       date.formatted(Date.FormatStyle(locale: locale)))
+
+
         locale = Locale(identifier: "en-UK")
         XCTAssertEqual(date.bpFormatted(.dateTime.locale(locale)),
                        date.formatted(.dateTime.locale(locale)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(locale: locale)),
+                       date.formatted(Date.FormatStyle(locale: locale)))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testCalendar() {
+
+        var calendar = Calendar(identifier: .gregorian)
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(calendar: calendar)),
+                       date.formatted(Date.FormatStyle(calendar: calendar)))
+
+        calendar = Calendar(identifier: .buddhist)
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(calendar: calendar)),
+                       date.formatted(Date.FormatStyle(calendar: calendar)))
+
+        calendar = Calendar(identifier: .chinese)
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(calendar: calendar)),
+                       date.formatted(Date.FormatStyle(calendar: calendar)))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testCapitalization() {
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .unknown)),
+                       date.formatted(Date.FormatStyle(capitalizationContext: .unknown)))
+
+            XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .standalone)),
+                           date.formatted(Date.FormatStyle(capitalizationContext: .standalone)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .listItem)),
+                       date.formatted(Date.FormatStyle(capitalizationContext: .listItem)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .beginningOfSentence)),
+                       date.formatted(Date.FormatStyle(capitalizationContext: .beginningOfSentence)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .middleOfSentence)),
+                       date.formatted(Date.FormatStyle(capitalizationContext: .middleOfSentence)))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
