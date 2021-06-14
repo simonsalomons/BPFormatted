@@ -190,6 +190,7 @@ extension Date.BPISO8601FormatStyle {
 
     public func timeZone(separator: Date.BPISO8601FormatStyle.TimeZoneSeparator) -> Date.BPISO8601FormatStyle {
         var copy = self
+        copy._formatFields.insert(.timeZone)
         copy.timeZoneSeparator = separator
         return copy
     }
@@ -214,7 +215,6 @@ extension Date.BPISO8601FormatStyle {
 
     public func timeZoneSeparator(_ separator: Date.BPISO8601FormatStyle.TimeZoneSeparator) -> Date.BPISO8601FormatStyle {
         var copy = self
-        copy._formatFields.insert(.timeZone)
         copy.timeZoneSeparator = separator
         return copy
     }
