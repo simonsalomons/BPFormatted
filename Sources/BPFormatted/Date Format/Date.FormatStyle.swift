@@ -146,7 +146,7 @@ extension Date.BPFormatStyle {
     public func era(_ format: Date.BPFormatStyle.Symbol.Era = .abbreviated) -> Date.BPFormatStyle {
         var copy = copyWithoutStyles()
         copy.symbols.era = format.value
-        return self
+        return copy
     }
 
     public func year(_ format: Date.BPFormatStyle.Symbol.Year = .defaultDigits) -> Date.BPFormatStyle {
