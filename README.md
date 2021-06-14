@@ -42,4 +42,18 @@ All possibilities are not yet fully documented by Apple. Your best bet right now
 
 ## Warning
 
-Since the current release of Foundation this is based on is still in bèta, everything is still subject to change.
+* Since the current release of Foundation this is based on is still in bèta, everything is still subject to change.
+* This is my first open source project. If you have any suggestions/improvements, I am open-minded.
+
+## Installation
+SPM:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/simonsalomons/BPFormatted.git", .upToNextMajor(from: "0.0.1"))
+]
+```
+
+CocoaPods:
+
+TBA
