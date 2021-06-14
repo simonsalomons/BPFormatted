@@ -1,6 +1,6 @@
 # BPFormatted
 
-This is a back-port of the .formatted API in Foundation that was introduced at WWDC '21 for iOS 15, macOS 12.0, tvOS 15.0, and watchOS 8.0.
+This is a back-port of the `.formatted` API in Foundation that was introduced at WWDC '21 for iOS 15, macOS 12.0, tvOS 15.0, and watchOS 8.0.
 
 Most developers cannot start developing their apps from those platforms and upwards.
 
@@ -24,6 +24,21 @@ What's already available and what's to come.
 - [ ] RelativeDate
 - [ ] ByteCount
 - [ ] String parsing (maybe)
+
+## How to use
+
+The same API as in Apple's Foundation framework, but prefixed with `bp`.
+
+```swift
+// Apple's Foundation
+Date().formatted()
+// BPFormatted
+Date().bpFormatted()
+```
+
+You will get automatic compiler warnings if you try to use this framework when your minimum deployment already allows you to use Apple's official API.
+
+All possibilities are not yet fully documented by Apple. Your best bet right now is to watch [What's new in Foundation (WWDC 2021)](https://developer.apple.com/videos/play/wwdc2021/10109/) starting at 14:30.
 
 ## Warning
 
