@@ -7,6 +7,10 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testGeneral() {
+        XCTAssertEqual(date.bpFormatted(),
+                       date.formatted())
+
+
         XCTAssertEqual(date.bpFormatted(.dateTime),
                        date.formatted(.dateTime))
 
