@@ -58,19 +58,6 @@ extension Date.BPFormatStyle {
             }
         }
 
-        internal var dateFormatterStyle: DateFormatter.Style {
-            switch style {
-            case .omitted:
-                return .none
-            case .shortened:
-                return .short
-            case .standard:
-                return .medium
-            case .complete:
-                return .long
-            }
-        }
-
         internal enum Style: Codable, Hashable {
             case omitted
             case shortened

@@ -70,21 +70,6 @@ extension Date.BPFormatStyle {
             }
         }
 
-        internal var dateFormatterStyle: DateFormatter.Style {
-            switch style {
-            case .omitted:
-                return .none
-            case .abbreviated:
-                return .medium
-            case .numeric:
-                return .short
-            case .long:
-                return .long
-            case .complete:
-                return .full
-            }
-        }
-
         internal enum Style: Codable, Hashable {
             case omitted
             case numeric
