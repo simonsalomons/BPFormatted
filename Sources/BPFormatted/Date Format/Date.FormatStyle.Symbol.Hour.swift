@@ -41,7 +41,7 @@ extension Date.BPFormatStyle.Symbol.Hour {
             Date.BPFormatStyle.Symbol.Hour.AMPMStyle(style: .wide)
         }
 
-        internal enum Style: Codable {
+        internal enum Style: String, Codable {
             case omitted
             case narrow
             case abbreviated

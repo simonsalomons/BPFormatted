@@ -58,7 +58,7 @@ extension Date.BPFormatStyle {
             }
         }
 
-        internal enum Style: Codable, Hashable {
+        internal enum Style: String, Codable, Hashable {
             case omitted
             case shortened
             case standard
