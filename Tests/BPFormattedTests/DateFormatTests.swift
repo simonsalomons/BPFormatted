@@ -14,6 +14,7 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testGeneral() {
+
         XCTAssertEqual(date.bpFormatted(),
                        date.formatted())
 
@@ -391,6 +392,21 @@ final class BPFormattedTests: XCTestCase {
 
         XCTAssertEqual(date.bpFormatted(.dateTime.timeZone(.identifier(.long))),
                        date.formatted(.dateTime.timeZone(.identifier(.long))))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testTimeZoneInitializer() {
+        var timeZone = TimeZone(abbreviation: "GMT")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
+
+        timeZone = TimeZone(abbreviation: "BST")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
+
+        timeZone = TimeZone(abbreviation: "ICT")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
