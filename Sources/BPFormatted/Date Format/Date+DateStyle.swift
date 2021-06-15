@@ -38,38 +38,6 @@ extension Date.BPFormatStyle {
             return DateStyle(style: .complete)
         }
 
-        internal var symbols: Symbols {
-            switch style {
-            case .omitted:
-                return Symbols()
-            case .abbreviated:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.abbreviated)
-                    .day(.defaultDigits)
-                    .symbols
-            case .numeric:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.defaultDigits)
-                    .day(.defaultDigits)
-                    .symbols
-            case .long:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.wide)
-                    .day(.defaultDigits)
-                    .symbols
-            case .complete:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.wide)
-                    .day(.defaultDigits)
-                    .weekday(.wide)
-                    .symbols
-            }
-        }
-
         internal enum Style: String, Codable, Hashable {
             case omitted
             case numeric

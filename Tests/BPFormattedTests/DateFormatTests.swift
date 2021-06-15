@@ -455,21 +455,38 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testInteroperability() throws {
-        try assertInteroperability(.dateTime)
-        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
-        try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened))
+        try assertInteroperability(.dateTime,
+                                   .dateTime)
+
+        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM),
+                                   .dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
+
+        try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened),
+                                   Date.FormatStyle(date: .numeric, time: .shortened))
+
+        let locale = Locale(identifier: "en-US")
+        let calendar = Calendar(identifier: .buddhist)
+        let timeZone = TimeZone(abbreviation: "BST")!
+        try assertInteroperability(Date.BPFormatStyle(date: .complete,
+                                                      time: .complete,
+                                                      locale: locale,
+                                                      calendar: calendar,
+                                                      timeZone: timeZone,
+                                                      capitalizationContext: .beginningOfSentence),
+                                   Date.FormatStyle(date: .complete,
+                                                    time: .complete,
+                                                    locale: locale,
+                                                    calendar: calendar,
+                                                    timeZone: timeZone,
+                                                    capitalizationContext: .beginningOfSentence))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-    func assertInteroperability(_ bpFormat: Date.BPFormatStyle) throws {
+    func assertInteroperability<T: FormatStyle>(_ bpFormat: Date.BPFormatStyle, _ format: T) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
-        let appleDecoded = try JSONDecoder().decode(Date.FormatStyle.self, from: bpEncoded)
+        let appleEncoded = try JSONEncoder().encode(format)
 
-        XCTAssertEqual(bpFormat.timeZone, appleDecoded.timeZone)
-        XCTAssertEqual(bpFormat.locale, appleDecoded.locale)
-        XCTAssertEqual(bpFormat.calendar, appleDecoded.calendar)
-
-        XCTAssertEqual(date.bpFormatted(bpFormat),
-                       date.formatted(appleDecoded))
+        XCTAssertEqual(String(data: bpEncoded, encoding: .utf8)!,
+                       String(data: appleEncoded, encoding: .utf8)!)
     }
 }

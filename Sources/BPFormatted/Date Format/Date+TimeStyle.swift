@@ -33,31 +33,6 @@ extension Date.BPFormatStyle {
             return TimeStyle(style: .complete)
         }
 
-        internal var symbols: Symbols {
-            switch style {
-            case .omitted:
-                return Symbols()
-            case .shortened:
-                return Date.BPFormatStyle.dateTime
-                    .minute(.twoDigits)
-                    .hour(.defaultDigits(amPM: .abbreviated))
-                    .symbols
-            case .standard:
-                return Date.BPFormatStyle.dateTime
-                    .minute(.twoDigits)
-                    .hour(.defaultDigits(amPM: .abbreviated))
-                    .second(.twoDigits)
-                    .symbols
-            case .complete:
-                return Date.BPFormatStyle.dateTime
-                    .minute(.twoDigits)
-                    .hour(.defaultDigits(amPM: .abbreviated))
-                    .second(.twoDigits)
-                    .timeZone(.specificName(.short))
-                    .symbols
-            }
-        }
-
         internal enum Style: String, Codable, Hashable {
             case omitted
             case shortened
