@@ -23,5 +23,6 @@ let package = Package(
         .testTarget(
             name: "BPFormattedTests",
             dependencies: ["BPFormatted"]),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
