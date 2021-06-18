@@ -138,9 +138,11 @@ extension Date.BPISO8601FormatStyle {
 extension Date.BPISO8601FormatStyle : BPFormatStyle {
 
     private static var dateFormatter = ISO8601DateFormatter()
+    private static let lock = DispatchSemaphore(value: 1)
 
     /// Creates a `FormatOutput` instance from `value`.
     public func format(_ value: Date) -> String {
+        Self.lock.wait()
         Self.dateFormatter.timeZone = timeZone
         var options: ISO8601DateFormatter.Options
         if _formatFields.isEmpty {
@@ -158,7 +160,9 @@ extension Date.BPISO8601FormatStyle : BPFormatStyle {
             }
         }
         Self.dateFormatter.formatOptions = options
-        return Self.dateFormatter.string(from: value)
+        let formatted = Self.dateFormatter.string(from: value)
+        Self.lock.signal()
+        return formatted
     }
 
     /// The type of data to format.

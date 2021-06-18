@@ -83,10 +83,12 @@ extension Date.BPFormatStyle {
 
 extension Date.BPFormatStyle: BPFormatStyle {
 
-    private static var dateFormatter = DateFormatter()
+    private static let dateFormatter = DateFormatter()
+    private static let lock = DispatchSemaphore(value: 1)
 
     /// Creates a `FormatOutput` instance from `value`.
     public func format(_ value: Date) -> String {
+        Self.lock.wait()
         Self.dateFormatter.locale = locale
         Self.dateFormatter.calendar = calendar
         Self.dateFormatter.timeZone = timeZone
@@ -103,7 +105,9 @@ extension Date.BPFormatStyle: BPFormatStyle {
          print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .middleOfSentence)))
          ```
          */
-        return Self.dateFormatter.string(from: value)
+        let formatted = Self.dateFormatter.string(from: value)
+        Self.lock.signal()
+        return formatted
     }
 
     /// If the format allows selecting a locale, returns a copy of this format with the new locale set. Default implementation returns an unmodified self.

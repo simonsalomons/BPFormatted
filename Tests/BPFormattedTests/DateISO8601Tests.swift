@@ -142,4 +142,34 @@ final class DateISO8601Tests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(bpFormat),
                        date.formatted(appleDecoded))
     }
+
+    // Since we're using a single ISO8601DateFormatter behind the scenes and multiple threads can call into this formatting api, we need to make sure there are no concurrency issues (without using async await)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testConcurrency() {
+        let repetitions = 1_000
+        let datesExpectation = expectation(description: "Complete date tests")
+        datesExpectation.expectedFulfillmentCount = repetitions
+        let timesExpectation = expectation(description: "Complete time tests")
+        timesExpectation.expectedFulfillmentCount = repetitions
+
+        let datesQueue = DispatchQueue(label: "Dates")
+        let timesQueue = DispatchQueue(label: "Times")
+
+        datesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.iso8601.year().day().month()),
+                               self.date.bpFormatted(.iso8601.year().day().month()))
+                datesExpectation.fulfill()
+            }
+        }
+        timesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.iso8601.timeZone(separator: .colon).dateSeparator(.dash)),
+                               self.date.bpFormatted(.iso8601.timeZone(separator: .colon).dateSeparator(.dash)))
+                timesExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 30, handler: nil)
+    }
 }
