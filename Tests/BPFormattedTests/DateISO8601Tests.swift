@@ -113,4 +113,33 @@ final class DateISO8601Tests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(.iso8601.timeSeparator(.colon)),
                        date.formatted(.iso8601.timeSeparator(.colon)))
     }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testInteroperability() throws {
+        try assertInteroperability(.iso8601,
+                                   .iso8601)
+
+        try assertInteroperability(.iso8601.day().year().month(),
+                                   .iso8601.day().year().month())
+
+        let timeZone = TimeZone(abbreviation: "BST")!
+        try assertInteroperability(Date.BPISO8601FormatStyle(dateSeparator: .dash, dateTimeSeparator: .space, timeZone: timeZone),
+                                   Date.ISO8601FormatStyle(dateSeparator: .dash, dateTimeSeparator: .space, timeZone: timeZone))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func assertInteroperability<U: FormatStyle>(_ bpFormat: Date.BPISO8601FormatStyle, _ format: U) throws {
+        let bpEncoded = try JSONEncoder().encode(bpFormat)
+        let appleEncoded = try JSONEncoder().encode(format)
+
+        // Check if both json results have the same keys
+        let bpSortedKeys = (try JSONSerialization.jsonObject(with: bpEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        let appleSortedKeys = (try JSONSerialization.jsonObject(with: appleEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        XCTAssertEqual(bpSortedKeys, appleSortedKeys)
+
+        // Check if Apple can decode an encoded BPFormatStyle and compare the formatted result
+        let appleDecoded = try JSONDecoder().decode(Date.ISO8601FormatStyle.self, from: bpEncoded)
+        XCTAssertEqual(date.bpFormatted(bpFormat),
+                       date.formatted(appleDecoded))
+    }
 }

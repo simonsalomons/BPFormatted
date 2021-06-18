@@ -502,7 +502,14 @@ final class BPFormattedTests: XCTestCase {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
         let appleEncoded = try JSONEncoder().encode(format)
 
-        XCTAssertEqual(String(data: bpEncoded, encoding: .utf8)!,
-                       String(data: appleEncoded, encoding: .utf8)!)
+        // Check if both json results have the same keys
+        let bpSortedKeys = (try JSONSerialization.jsonObject(with: bpEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        let appleSortedKeys = (try JSONSerialization.jsonObject(with: appleEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        XCTAssertEqual(bpSortedKeys, appleSortedKeys)
+
+        // Check if Apple can decode an encoded BPFormatStyle and compare the formatted result
+        let appleDecoded = try JSONDecoder().decode(Date.FormatStyle.self, from: bpEncoded)
+        XCTAssertEqual(date.bpFormatted(bpFormat),
+                       date.formatted(appleDecoded))
     }
 }
