@@ -8,6 +8,9 @@
 import XCTest
 @testable import BPFormatted
 
+// Since we're comparing against api's from the base SDK's in Xcode 13, there's no reason to compile these tests
+#if swift(>=5.5)
+
 final class DateFormatTests: XCTestCase {
 
     let date = Date(timeIntervalSince1970: 1_623_225_158.123_456)
@@ -546,3 +549,5 @@ final class DateFormatTests: XCTestCase {
         waitForExpectations(timeout: 30, handler: nil)
     }
 }
+
+#endif

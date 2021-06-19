@@ -47,7 +47,6 @@ All possibilities are not yet fully documented by Apple. Your best bet right now
 ## Warning
 
 * Since the current release of Foundation this is based on is still in bèta, everything is still subject to change.
-* The unit tests contains code that needs the new base SDK's, so these tests will not compile in Xcode 12 or lower. The package itself should be fine.
 * To use the same syntax as the new API, you need to use Swift 5.5, otherwise, a longer form will be necessary.
 ```
 // Swift 5.5
