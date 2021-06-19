@@ -39,5 +39,20 @@ public struct FormatStyleCapitalizationContext: Codable, Hashable {
         case listItem
         case beginningOfSentence
         case middleOfSentence
+
+        var formatterContext: Formatter.Context {
+            switch self {
+            case .unknown:
+                return .unknown
+            case .standalone:
+                return .standalone
+            case .listItem:
+                return .listItem
+            case .beginningOfSentence:
+                return .beginningOfSentence
+            case .middleOfSentence:
+                return .middleOfSentence
+            }
+        }
     }
 }

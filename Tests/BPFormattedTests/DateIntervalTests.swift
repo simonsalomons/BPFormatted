@@ -9,6 +9,9 @@
 import XCTest
 @testable import BPFormatted
 
+// Since we're comparing against api's from the base SDK's in Xcode 13, there's no reason to compile these tests
+#if swift(>=5.5)
+
 final class DateIntervalTests: XCTestCase {
 
     let date1 = Date(timeIntervalSince1970: 1_580_025_657.654_321)
@@ -315,6 +318,7 @@ final class DateIntervalTests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func assertInteroperability<T: FormatStyle>(_ bpFormat: Date.BPIntervalFormatStyle, _ format: T) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
+        XCTAssertNoThrow(try JSONDecoder().decode(Date.BPIntervalFormatStyle.self, from: bpEncoded))
         let appleEncoded = try JSONEncoder().encode(format)
 
         // Check if both json results have the same keys
@@ -358,3 +362,5 @@ final class DateIntervalTests: XCTestCase {
         waitForExpectations(timeout: 30, handler: nil)
     }
 }
+
+#endif

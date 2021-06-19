@@ -21,20 +21,20 @@ extension Date {
         internal var symbols = SymbolsConfig()
 
         internal var currentSymbols: SymbolsConfig {
-            if !symbols.components.isEmpty {
+            guard symbols.components.isEmpty else {
                 return symbols
-            } else {
-                let config = SymbolsConfig(date: dateStyle, time: timeStyle)
-                if !config.components.isEmpty {
-                    return config
-                } else {
-                    return SymbolsConfig(year: .defaultDigits,
-                                         month: .defaultDigits,
-                                         day: .defaultDigits,
-                                         hour: .defaultDigits(amPM: .abbreviated),
-                                         minute: .twoDigits)
-                }
             }
+
+            let config = SymbolsConfig(date: dateStyle, time: timeStyle)
+            guard config.components.isEmpty else {
+                return config
+            }
+
+            return SymbolsConfig(year: .defaultDigits,
+                                 month: .defaultDigits,
+                                 day: .defaultDigits,
+                                 hour: .defaultDigits(amPM: .abbreviated),
+                                 minute: .twoDigits)
         }
 
         /// The locale to use when formatting date and time values.
@@ -97,18 +97,7 @@ extension Date.BPFormatStyle: BPFormatStyle {
         Self.dateFormatter.calendar = calendar
         Self.dateFormatter.timeZone = timeZone
         Self.dateFormatter.setLocalizedDateFormatFromTemplate(currentSymbols.template)
-#warning("🆘 Implement capitalization context")
-        /*
-         I don't know what capitalization context is supposed to do.
-         Check the following code in a playground:
-         ```
-         print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .unknown)))
-         print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .standalone)))
-         print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .beginningOfSentence)))
-         print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .listItem)))
-         print(Date.now.formatted(Date.FormatStyle(date: .complete, time: .complete, capitalizationContext: .middleOfSentence)))
-         ```
-         */
+        Self.dateFormatter.formattingContext = capitalizationContext.option.formatterContext
         let formatted = Self.dateFormatter.string(from: value)
         Self.lock.signal()
         return formatted
