@@ -14,6 +14,7 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testGeneral() {
+
         XCTAssertEqual(date.bpFormatted(),
                        date.formatted())
 
@@ -394,6 +395,21 @@ final class BPFormattedTests: XCTestCase {
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testTimeZoneInitializer() {
+        var timeZone = TimeZone(abbreviation: "GMT")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
+
+        timeZone = TimeZone(abbreviation: "BST")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
+
+        timeZone = TimeZone(abbreviation: "ICT")!
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(timeZone: timeZone)),
+                       date.formatted(Date.FormatStyle(timeZone: timeZone)))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testLocale() {
         var locale = Locale(identifier: "be-NL")
         XCTAssertEqual(date.bpFormatted(.dateTime.locale(locale)),
@@ -455,21 +471,75 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testInteroperability() throws {
-        try assertInteroperability(.dateTime)
-        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
-        try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened))
+        try assertInteroperability(.dateTime,
+                                   .dateTime)
+
+        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM),
+                                   .dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
+
+        try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened),
+                                   Date.FormatStyle(date: .numeric, time: .shortened))
+
+        let locale = Locale(identifier: "en-US")
+        let calendar = Calendar(identifier: .buddhist)
+        let timeZone = TimeZone(abbreviation: "BST")!
+        try assertInteroperability(Date.BPFormatStyle(date: .complete,
+                                                      time: .complete,
+                                                      locale: locale,
+                                                      calendar: calendar,
+                                                      timeZone: timeZone,
+                                                      capitalizationContext: .beginningOfSentence),
+                                   Date.FormatStyle(date: .complete,
+                                                    time: .complete,
+                                                    locale: locale,
+                                                    calendar: calendar,
+                                                    timeZone: timeZone,
+                                                    capitalizationContext: .beginningOfSentence))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-    func assertInteroperability(_ bpFormat: Date.BPFormatStyle) throws {
+    func assertInteroperability<T: FormatStyle>(_ bpFormat: Date.BPFormatStyle, _ format: T) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
+        let appleEncoded = try JSONEncoder().encode(format)
+
+        // Check if both json results have the same keys
+        let bpSortedKeys = (try JSONSerialization.jsonObject(with: bpEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        let appleSortedKeys = (try JSONSerialization.jsonObject(with: appleEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        XCTAssertEqual(bpSortedKeys, appleSortedKeys)
+
+        // Check if Apple can decode an encoded BPFormatStyle and compare the formatted result
         let appleDecoded = try JSONDecoder().decode(Date.FormatStyle.self, from: bpEncoded)
-
-        XCTAssertEqual(bpFormat.timeZone, appleDecoded.timeZone)
-        XCTAssertEqual(bpFormat.locale, appleDecoded.locale)
-        XCTAssertEqual(bpFormat.calendar, appleDecoded.calendar)
-
         XCTAssertEqual(date.bpFormatted(bpFormat),
                        date.formatted(appleDecoded))
+    }
+
+    // Since we're using a single DateFormatter behind the scenes and multiple threads can call into this formatting api, we need to make sure there are no concurrency issues (without using async await)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testConcurrency() {
+        let repetitions = 1_000
+        let datesExpectation = expectation(description: "Complete date tests")
+        datesExpectation.expectedFulfillmentCount = repetitions
+        let timesExpectation = expectation(description: "Complete time tests")
+        timesExpectation.expectedFulfillmentCount = repetitions
+
+        let datesQueue = DispatchQueue(label: "Dates")
+        let timesQueue = DispatchQueue(label: "Times")
+
+        datesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.dateTime.year().day().month()),
+                               self.date.bpFormatted(.dateTime.year().day().month()))
+                datesExpectation.fulfill()
+            }
+        }
+        timesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.dateTime.minute().second().hour()),
+                               self.date.bpFormatted(.dateTime.minute().second().hour()))
+                timesExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 30, handler: nil)
     }
 }

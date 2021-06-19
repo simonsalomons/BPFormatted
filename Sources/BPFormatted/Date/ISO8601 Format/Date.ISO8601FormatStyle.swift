@@ -1,5 +1,5 @@
 //
-//  Date+BPISO8601FormatStyle.swift
+//  Date+ISO8601FormatStyle.swift
 //  
 //
 //  Created by Simon Salomons on 13/06/2021.
@@ -10,6 +10,10 @@ import Foundation
 @available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension Date {
 
+    @available(iOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "ISO8601FormatStyle")
+    @available(macOS, deprecated: 12.0, message: "Consider using Apple's API", renamed: "ISO8601FormatStyle")
+    @available(tvOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "ISO8601FormatStyle")
+    @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "ISO8601FormatStyle")
     /// Options for generating and parsing string representations of dates following the ISO 8601 standard.
     public struct BPISO8601FormatStyle {
 
@@ -121,12 +125,28 @@ extension Date {
 }
 
 @available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
+extension Date.BPISO8601FormatStyle {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_formatFields, forKey: ._formatFields)
+        try container.encode(timeZone, forKey: .timeZone)
+        try container.encode(dateSeparator, forKey: .dateSeparator)
+        try container.encode(includingFractionalSeconds, forKey: .includingFractionalSeconds)
+        try container.encode(timeSeparator, forKey: .timeSeparator)
+        try container.encode(timeZoneSeparator, forKey: .timeZoneSeparator)
+        try container.encode(dateTimeSeparator, forKey: .dateTimeSeparator)
+    }
+}
+
+@available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *)
 extension Date.BPISO8601FormatStyle : BPFormatStyle {
 
     private static var dateFormatter = ISO8601DateFormatter()
+    private static let lock = DispatchSemaphore(value: 1)
 
     /// Creates a `FormatOutput` instance from `value`.
     public func format(_ value: Date) -> String {
+        Self.lock.wait()
         Self.dateFormatter.timeZone = timeZone
         var options: ISO8601DateFormatter.Options
         if _formatFields.isEmpty {
@@ -144,7 +164,9 @@ extension Date.BPISO8601FormatStyle : BPFormatStyle {
             }
         }
         Self.dateFormatter.formatOptions = options
-        return Self.dateFormatter.string(from: value)
+        let formatted = Self.dateFormatter.string(from: value)
+        Self.lock.signal()
+        return formatted
     }
 
     /// The type of data to format.

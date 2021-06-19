@@ -42,3 +42,10 @@ extension BPFormatStyle where Self == Date.BPISO8601FormatStyle {
         Date.BPISO8601FormatStyle()
     }
 }
+
+extension BPFormatStyle where Self == Date.BPIntervalFormatStyle {
+
+    public static var interval: Date.BPIntervalFormatStyle {
+        Date.BPIntervalFormatStyle()
+    }
+}

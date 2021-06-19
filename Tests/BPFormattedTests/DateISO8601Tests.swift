@@ -113,4 +113,63 @@ final class DateISO8601Tests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(.iso8601.timeSeparator(.colon)),
                        date.formatted(.iso8601.timeSeparator(.colon)))
     }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testInteroperability() throws {
+        try assertInteroperability(.iso8601,
+                                   .iso8601)
+
+        try assertInteroperability(.iso8601.day().year().month(),
+                                   .iso8601.day().year().month())
+
+        let timeZone = TimeZone(abbreviation: "BST")!
+        try assertInteroperability(Date.BPISO8601FormatStyle(dateSeparator: .dash, dateTimeSeparator: .space, timeZone: timeZone),
+                                   Date.ISO8601FormatStyle(dateSeparator: .dash, dateTimeSeparator: .space, timeZone: timeZone))
+    }
+
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func assertInteroperability<U: FormatStyle>(_ bpFormat: Date.BPISO8601FormatStyle, _ format: U) throws {
+        let bpEncoded = try JSONEncoder().encode(bpFormat)
+        let appleEncoded = try JSONEncoder().encode(format)
+
+        // Check if both json results have the same keys
+        let bpSortedKeys = (try JSONSerialization.jsonObject(with: bpEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        let appleSortedKeys = (try JSONSerialization.jsonObject(with: appleEncoded, options: []) as? [String: Any])?.keys.sorted() ?? []
+        XCTAssertEqual(bpSortedKeys, appleSortedKeys)
+
+        // Check if Apple can decode an encoded BPFormatStyle and compare the formatted result
+        let appleDecoded = try JSONDecoder().decode(Date.ISO8601FormatStyle.self, from: bpEncoded)
+        XCTAssertEqual(date.bpFormatted(bpFormat),
+                       date.formatted(appleDecoded))
+    }
+
+    // Since we're using a single ISO8601DateFormatter behind the scenes and multiple threads can call into this formatting api, we need to make sure there are no concurrency issues (without using async await)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+    func testConcurrency() {
+        let repetitions = 1_000
+        let datesExpectation = expectation(description: "Complete date tests")
+        datesExpectation.expectedFulfillmentCount = repetitions
+        let timesExpectation = expectation(description: "Complete time tests")
+        timesExpectation.expectedFulfillmentCount = repetitions
+
+        let datesQueue = DispatchQueue(label: "Dates")
+        let timesQueue = DispatchQueue(label: "Times")
+
+        datesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.iso8601.year().day().month()),
+                               self.date.bpFormatted(.iso8601.year().day().month()))
+                datesExpectation.fulfill()
+            }
+        }
+        timesQueue.async {
+            for _ in 0..<repetitions {
+                XCTAssertEqual(self.date.bpFormatted(.iso8601.timeZone(separator: .colon).dateSeparator(.dash)),
+                               self.date.bpFormatted(.iso8601.timeZone(separator: .colon).dateSeparator(.dash)))
+                timesExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 30, handler: nil)
+    }
 }

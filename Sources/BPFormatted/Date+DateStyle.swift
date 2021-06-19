@@ -10,7 +10,7 @@ import Foundation
 extension Date.BPFormatStyle {
 
     /// Predefined date styles varied in lengths or the components included. The exact format depends on the locale.
-    public struct DateStyle: Codable, Hashable {
+    public struct DateStyle: Hashable {
         internal let style: Style
 
         /// Excludes the date part.
@@ -38,44 +38,29 @@ extension Date.BPFormatStyle {
             return DateStyle(style: .complete)
         }
 
-        internal var symbols: Symbols {
-            switch style {
-            case .omitted:
-                return Symbols()
-            case .abbreviated:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.abbreviated)
-                    .day(.defaultDigits)
-                    .symbols
-            case .numeric:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.defaultDigits)
-                    .day(.defaultDigits)
-                    .symbols
-            case .long:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.wide)
-                    .day(.defaultDigits)
-                    .symbols
-            case .complete:
-                return Date.BPFormatStyle.dateTime
-                    .year(.defaultDigits)
-                    .month(.wide)
-                    .day(.defaultDigits)
-                    .weekday(.wide)
-                    .symbols
-            }
-        }
-
-        internal enum Style: String, Codable, Hashable {
+        internal enum Style: Int, Codable, Hashable {
             case omitted
             case numeric
             case abbreviated
             case long
             case complete
         }
+    }
+}
+
+extension Date.BPFormatStyle.DateStyle: Codable {
+
+    enum CodingKeys: String, CodingKey {
+        case rawValue
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        style = try container.decode(Style.self, forKey: .rawValue)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(style, forKey: .rawValue)
     }
 }

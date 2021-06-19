@@ -16,7 +16,7 @@ What's already available and what's to come.
 
 - [x] Date
 - [x] ISO8601
-- [ ] DateInterval
+- [x] DateInterval
 - [ ] DateComponents
 - [ ] List
 - [ ] Measurement
@@ -32,8 +32,12 @@ The same API as in Apple's Foundation framework, but prefixed with `bp`.
 ```swift
 // Apple's Foundation
 Date().formatted()
+Date().formatted(.dateTime.month().year(.twoDigits))
+(Date()..<Date()).formatted(.interval.year())
 // BPFormatted
 Date().bpFormatted()
+Date().bpFormatted(.dateTime.month().year(.twoDigits))
+(Date()..<Date()).bpFormatted(.interval.year())
 ```
 
 You will get automatic compiler warnings if you try to use this framework when your minimum deployment already allows you to use Apple's official API.
@@ -43,6 +47,14 @@ All possibilities are not yet fully documented by Apple. Your best bet right now
 ## Warning
 
 * Since the current release of Foundation this is based on is still in bèta, everything is still subject to change.
+* The unit tests contains code that needs the new base SDK's, so these tests will not compile in Xcode 12 or lower. The package itself should be fine.
+* To use the same syntax as the new API, you need to use Swift 5.5, otherwise, a longer form will be necessary.
+```
+// Swift 5.5
+Date().bpFormatted(.dateTime)
+// Swift 5.x
+Date().bpFormatted(Date.BPFormatStyle.dateTime)
+```
 * This is my first open source project. If you have any suggestions/improvements, I am open-minded.
 
 ## Installation
