@@ -130,6 +130,7 @@ final class DateISO8601Tests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func assertInteroperability<U: FormatStyle>(_ bpFormat: Date.BPISO8601FormatStyle, _ format: U) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
+        XCTAssertNoThrow(try JSONDecoder().decode(Date.BPISO8601FormatStyle.self, from: bpEncoded))
         let appleEncoded = try JSONEncoder().encode(format)
 
         // Check if both json results have the same keys

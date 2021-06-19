@@ -15,9 +15,9 @@ To provide the exact same api with the exact same results as Apple's Foundation 
 What's already available and what's to come.
 
 - [x] Date
-- [x] ISO8601
+- [x] ISO8601 (iOS 10, macOS 10.12, watchOS 3, tvOS 10)
 - [x] DateInterval
-- [ ] DateComponents
+- [x] Relative Dates (iOS 15, macOS 10.15, watchOS 6, tvOS 13)
 - [ ] List
 - [ ] Measurement
 - [ ] PersonNameComponent

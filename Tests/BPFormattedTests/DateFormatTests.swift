@@ -1,5 +1,5 @@
 //
-//  BPFormattedTests.swift
+//  DateFormatTests.swift
 //
 //
 //  Created by Simon Salomons on 13/06/2021.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import BPFormatted
 
-final class BPFormattedTests: XCTestCase {
+final class DateFormatTests: XCTestCase {
 
     let date = Date(timeIntervalSince1970: 1_623_225_158.123_456)
 
@@ -453,20 +453,22 @@ final class BPFormattedTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testCapitalization() {
-        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .unknown)),
-                       date.formatted(Date.FormatStyle(capitalizationContext: .unknown)))
+        let locale = Locale(identifier: "fr-FR")
 
-            XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .standalone)),
-                           date.formatted(Date.FormatStyle(capitalizationContext: .standalone)))
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(date: .complete, locale: locale, capitalizationContext: .unknown)),
+                       date.formatted(Date.FormatStyle(date: .complete, locale: locale, capitalizationContext: .unknown)))
 
-        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .listItem)),
-                       date.formatted(Date.FormatStyle(capitalizationContext: .listItem)))
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(date: .complete, locale: locale, capitalizationContext: .standalone)),
+                           date.formatted(Date.FormatStyle(date: .complete, locale: locale, capitalizationContext: .standalone)))
 
-        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .beginningOfSentence)),
-                       date.formatted(Date.FormatStyle(capitalizationContext: .beginningOfSentence)))
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(date: .complete, locale: locale, capitalizationContext: .listItem)),
+                       date.formatted(Date.FormatStyle(date: .complete, locale: locale, capitalizationContext: .listItem)))
 
-        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(capitalizationContext: .middleOfSentence)),
-                       date.formatted(Date.FormatStyle(capitalizationContext: .middleOfSentence)))
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(date: .complete, locale: locale, capitalizationContext: .beginningOfSentence)),
+                       date.formatted(Date.FormatStyle(date: .complete, locale: locale, capitalizationContext: .beginningOfSentence)))
+
+        XCTAssertEqual(date.bpFormatted(Date.BPFormatStyle(date: .complete, locale: locale, capitalizationContext: .middleOfSentence)),
+                       date.formatted(Date.FormatStyle(date: .complete, locale: locale, capitalizationContext: .middleOfSentence)))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
@@ -500,6 +502,7 @@ final class BPFormattedTests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func assertInteroperability<T: FormatStyle>(_ bpFormat: Date.BPFormatStyle, _ format: T) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
+        XCTAssertNoThrow(try JSONDecoder().decode(Date.BPFormatStyle.self, from: bpEncoded))
         let appleEncoded = try JSONEncoder().encode(format)
 
         // Check if both json results have the same keys

@@ -49,3 +49,11 @@ extension BPFormatStyle where Self == Date.BPIntervalFormatStyle {
         Date.BPIntervalFormatStyle()
     }
 }
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension BPFormatStyle where Self == Date.BPRelativeFormatStyle {
+
+    public static func relative(presentation: Date.BPRelativeFormatStyle.Presentation, unitsStyle: Date.BPRelativeFormatStyle.UnitsStyle = .wide) -> Self {
+        Date.BPRelativeFormatStyle(presentation: presentation, unitsStyle: unitsStyle)
+    }
+}

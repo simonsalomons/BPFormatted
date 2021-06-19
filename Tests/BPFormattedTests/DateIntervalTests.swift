@@ -315,6 +315,7 @@ final class DateIntervalTests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func assertInteroperability<T: FormatStyle>(_ bpFormat: Date.BPIntervalFormatStyle, _ format: T) throws {
         let bpEncoded = try JSONEncoder().encode(bpFormat)
+        XCTAssertNoThrow(try JSONDecoder().decode(Date.BPIntervalFormatStyle.self, from: bpEncoded))
         let appleEncoded = try JSONEncoder().encode(format)
 
         // Check if both json results have the same keys
