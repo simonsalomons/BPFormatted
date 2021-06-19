@@ -28,7 +28,11 @@ extension Date {
                 if !config.components.isEmpty {
                     return config
                 } else {
-                    return SymbolsConfig(date: .numeric, time: .shortened)
+                    return SymbolsConfig(year: .defaultDigits,
+                                         month: .defaultDigits,
+                                         day: .defaultDigits,
+                                         hour: .defaultDigits(amPM: .abbreviated),
+                                         minute: .twoDigits)
                 }
             }
         }
@@ -125,75 +129,6 @@ extension Date.BPFormatStyle: BPFormatStyle {
 }
 
 extension Date.BPFormatStyle {
-    internal struct SymbolsConfig: Hashable, Codable {
-        var era: String?
-        var year: String?
-        var quarter: String?
-        var month: String?
-        var week: String?
-        var day: String?
-        var dayOfYear: String?
-        var weekday: String?
-        var hour: String?
-        var minute: String?
-        var second: String?
-        var secondFraction: String?
-        var timeZoneSymbol: String?
-
-        var components: [String] {
-            [era, year, quarter, month, week, day, dayOfYear, weekday, hour, minute, second, secondFraction, timeZoneSymbol].compactMap({ $0 })
-        }
-
-        var template: String {
-            components.joined(separator: " ")
-        }
-
-        init() {}
-
-        init(date: DateStyle?, time: TimeStyle?) {
-            switch date?.style {
-            case .none, .omitted:
-                break
-            case .abbreviated:
-                year = Symbol.Year.defaultDigits.value
-                month = Symbol.Month.abbreviated.value
-                day = Symbol.Day.defaultDigits.value
-            case .numeric:
-                year = Symbol.Year.defaultDigits.value
-                month = Symbol.Month.defaultDigits.value
-                day = Symbol.Day.defaultDigits.value
-            case .long:
-                year = Symbol.Year.defaultDigits.value
-                month = Symbol.Month.wide.value
-                day = Symbol.Day.defaultDigits.value
-            case .complete:
-                year = Symbol.Year.defaultDigits.value
-                month = Symbol.Month.wide.value
-                day = Symbol.Day.defaultDigits.value
-                weekday = Symbol.Weekday.wide.value
-            }
-
-            switch time?.style {
-            case .none, .omitted:
-                break
-            case .shortened:
-                minute = Symbol.Minute.twoDigits.value
-                hour = Symbol.Hour.defaultDigits(amPM: .abbreviated).value
-            case .standard:
-                minute = Symbol.Minute.twoDigits.value
-                hour = Symbol.Hour.defaultDigits(amPM: .abbreviated).value
-                second = Symbol.Second.twoDigits.value
-            case .complete:
-                minute = Symbol.Minute.twoDigits.value
-                hour = Symbol.Hour.defaultDigits(amPM: .abbreviated).value
-                second = Symbol.Second.twoDigits.value
-                timeZoneSymbol = Symbol.TimeZone.specificName(.short).value
-            }
-        }
-    }
-}
-
-extension Date.BPFormatStyle {
 
     public func era(_ format: Date.BPFormatStyle.Symbol.Era = .abbreviated) -> Date.BPFormatStyle {
         var copy = self
@@ -271,79 +206,5 @@ extension Date.BPFormatStyle {
         var copy = self
         copy.symbols.timeZoneSymbol = format.value
         return copy
-    }
-}
-
-extension Date.BPFormatStyle {
-
-    public struct Symbol: Hashable {
-
-        public struct Era: Hashable {
-            internal var value: String
-        }
-
-        public struct Year: Hashable {
-            internal var value: String
-        }
-
-        public struct Quarter: Hashable {
-            internal var value: String
-        }
-
-        public struct Month: Hashable {
-            internal var value: String
-        }
-
-        public struct Week: Hashable {
-            internal var value: String
-        }
-
-        public struct Day: Hashable {
-            internal var value: String
-        }
-
-        public struct DayOfYear: Hashable {
-            internal var value: String
-        }
-
-        public struct Weekday: Hashable {
-            internal var value: String
-        }
-        
-        public struct Hour: Hashable {
-            internal var value: String
-        }
-
-        public struct Minute: Hashable {
-            internal var value: String
-        }
-
-        public struct Second: Hashable {
-            internal var value: String
-        }
-
-        public struct SecondFraction: Hashable {
-            internal var value: String
-        }
-
-        public struct TimeZone: Hashable {
-            internal var value: String
-        }
-
-        public struct StandaloneQuarter: Hashable {
-            internal var value: String
-        }
-
-        public struct StandaloneMonth: Hashable {
-            internal var value: String
-        }
-
-        public struct StandaloneWeekday: Hashable {
-            internal var value: String
-        }
-
-        public struct VerbatimHour: Hashable {
-            internal var value: String
-        }
     }
 }

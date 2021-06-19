@@ -16,7 +16,7 @@ What's already available and what's to come.
 
 - [x] Date
 - [x] ISO8601
-- [ ] DateInterval
+- [x] DateInterval
 - [ ] DateComponents
 - [ ] List
 - [ ] Measurement
@@ -33,9 +33,11 @@ The same API as in Apple's Foundation framework, but prefixed with `bp`.
 // Apple's Foundation
 Date().formatted()
 Date().formatted(.dateTime.month().year(.twoDigits))
+(Date()..<Date()).formatted(.interval.year())
 // BPFormatted
 Date().bpFormatted()
 Date().bpFormatted(.dateTime.month().year(.twoDigits))
+(Date()..<Date()).bpFormatted(.interval.year())
 ```
 
 You will get automatic compiler warnings if you try to use this framework when your minimum deployment already allows you to use Apple's official API.

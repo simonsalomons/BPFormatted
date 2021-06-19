@@ -11,7 +11,7 @@ extension Date.BPFormatStyle.Symbol.Weekday {
 
     /// Abbreviated day of week name. For example, "Tue".
     public static var abbreviated: Date.BPFormatStyle.Symbol.Weekday {
-        Date.BPFormatStyle.Symbol.Weekday(value: "EEE")
+        Date.BPFormatStyle.Symbol.Weekday(value: "E")
     }
 
     /// Wide day of week name. For example, "Tuesday".

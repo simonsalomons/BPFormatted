@@ -10,7 +10,7 @@ import Foundation
 extension Date.BPFormatStyle {
 
     /// Predefined time styles varied in lengths or the components included. The exact format depends on the locale.
-    public struct TimeStyle : Codable, Hashable {
+    public struct TimeStyle: Hashable {
         internal let style: Style
 
         /// Excludes the time part.
@@ -33,11 +33,28 @@ extension Date.BPFormatStyle {
             return TimeStyle(style: .complete)
         }
 
-        internal enum Style: String, Codable, Hashable {
+        internal enum Style: Int, Codable, Hashable {
             case omitted
             case shortened
             case standard
             case complete
         }
+    }
+}
+
+extension Date.BPFormatStyle.TimeStyle: Codable {
+
+    enum CodingKeys: String, CodingKey {
+        case rawValue
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        style = try container.decode(Style.self, forKey: .rawValue)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(style, forKey: .rawValue)
     }
 }
