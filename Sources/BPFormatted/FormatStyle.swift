@@ -57,3 +57,10 @@ extension BPFormatStyle where Self == Date.BPRelativeFormatStyle {
         Date.BPRelativeFormatStyle(presentation: presentation, unitsStyle: unitsStyle)
     }
 }
+
+extension BPFormatStyle where Self == Decimal.BPFormatStyle {
+
+    public static var number: Decimal.BPFormatStyle {
+        Decimal.BPFormatStyle()
+    }
+}

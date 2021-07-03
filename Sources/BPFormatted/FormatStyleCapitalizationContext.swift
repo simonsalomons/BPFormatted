@@ -7,30 +7,34 @@
 
 import Foundation
 
-public struct FormatStyleCapitalizationContext: Codable, Hashable {
+@available(iOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "FormatStyleCapitalizationContext")
+@available(macOS, deprecated: 12.0, message: "Consider using Apple's API", renamed: "FormatStyleCapitalizationContext")
+@available(tvOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "FormatStyleCapitalizationContext")
+@available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "FormatStyleCapitalizationContext")
+public struct BPFormatStyleCapitalizationContext: Codable, Hashable {
 
     internal let option: Option
 
-    public static var unknown: FormatStyleCapitalizationContext {
-        return FormatStyleCapitalizationContext(option: .unknown)
+    public static var unknown: BPFormatStyleCapitalizationContext {
+        return BPFormatStyleCapitalizationContext(option: .unknown)
     }
 
     /// For stand-alone usage, such as an isolated name on a calendar page.
-    public static var standalone: FormatStyleCapitalizationContext {
-        return FormatStyleCapitalizationContext(option: .standalone)
+    public static var standalone: BPFormatStyleCapitalizationContext {
+        return BPFormatStyleCapitalizationContext(option: .standalone)
     }
 
     /// For use in a UI list or menu item.
-    public static var listItem: FormatStyleCapitalizationContext {
-        return FormatStyleCapitalizationContext(option: .listItem)
+    public static var listItem: BPFormatStyleCapitalizationContext {
+        return BPFormatStyleCapitalizationContext(option: .listItem)
     }
 
-    public static var beginningOfSentence: FormatStyleCapitalizationContext {
-        return FormatStyleCapitalizationContext(option: .beginningOfSentence)
+    public static var beginningOfSentence: BPFormatStyleCapitalizationContext {
+        return BPFormatStyleCapitalizationContext(option: .beginningOfSentence)
     }
 
-    public static var middleOfSentence: FormatStyleCapitalizationContext {
-        return FormatStyleCapitalizationContext(option: .middleOfSentence)
+    public static var middleOfSentence: BPFormatStyleCapitalizationContext {
+        return BPFormatStyleCapitalizationContext(option: .middleOfSentence)
     }
 
     internal enum Option: Int, Codable, Hashable {
