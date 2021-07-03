@@ -47,7 +47,7 @@ extension Date {
         public var calendar: Calendar
 
         /// The capitalization formatting context used when formatting date and time values.
-        public var capitalizationContext: FormatStyleCapitalizationContext
+        public var capitalizationContext: BPFormatStyleCapitalizationContext
 
         /// Creates a new `FormatStyle` with the given configurations.
         /// - Parameters:
@@ -63,7 +63,7 @@ extension Date {
                     locale: Locale = .autoupdatingCurrent,
                     calendar: Calendar = .autoupdatingCurrent,
                     timeZone: TimeZone = .autoupdatingCurrent,
-                    capitalizationContext: FormatStyleCapitalizationContext = .unknown) {
+                    capitalizationContext: BPFormatStyleCapitalizationContext = .unknown) {
             self.dateStyle = date
             self.timeStyle = time
             self.locale = locale

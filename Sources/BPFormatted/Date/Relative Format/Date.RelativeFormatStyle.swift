@@ -92,7 +92,7 @@ extension Date {
 
         public var presentation: Date.BPRelativeFormatStyle.Presentation
         public var unitsStyle: Date.BPRelativeFormatStyle.UnitsStyle
-        public var capitalizationContext: FormatStyleCapitalizationContext
+        public var capitalizationContext: BPFormatStyleCapitalizationContext
         public var locale: Locale
         public var calendar: Calendar
 
@@ -100,7 +100,7 @@ extension Date {
                     unitsStyle: Date.BPRelativeFormatStyle.UnitsStyle = .wide,
                     locale: Locale = .autoupdatingCurrent,
                     calendar: Calendar = .autoupdatingCurrent,
-                    capitalizationContext: FormatStyleCapitalizationContext = .unknown) {
+                    capitalizationContext: BPFormatStyleCapitalizationContext = .unknown) {
             self.presentation = presentation
             self.unitsStyle = unitsStyle
             self.locale = locale
