@@ -72,6 +72,7 @@ extension Decimal {
     }
 }
 
+#if swift(<5.5)
 extension Decimal.BPFormatStyle.Configuration.RoundingRule: RawRepresentable, Codable {
     public typealias RawValue = Int
 
@@ -113,6 +114,7 @@ extension Decimal.BPFormatStyle.Configuration.RoundingRule: RawRepresentable, Co
         }
     }
 }
+#endif
 
 internal extension Decimal.BPFormatStyle {
     struct Collection: Codable, Hashable {
