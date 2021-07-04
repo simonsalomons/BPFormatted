@@ -61,7 +61,6 @@ public enum BPNumberFormatStyleConfiguration {
         }
 
         public static func integerAndFractionLength(integer: Int, fraction: Int) -> Precision {
-#warning("🆘 Add unit test that checks if there really is no minimum value for this")
             return Precision(option: .integerAndFraction(maxFractionalLength: fraction,
                                                          minFractionalLength: fraction,
                                                          minIntegerLength: integer,
@@ -76,7 +75,6 @@ public enum BPNumberFormatStyleConfiguration {
         }
 
         public static func integerLength(_ length: Int) -> Precision {
-#warning("🆘 Add unit test that checks if there really is no minimum value for this")
             return Precision(option: .integerAndFraction(maxFractionalLength: nil,
                                                          minFractionalLength: nil,
                                                          minIntegerLength: length,
