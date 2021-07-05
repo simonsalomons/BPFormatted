@@ -64,3 +64,10 @@ extension BPFormatStyle where Self == Decimal.BPFormatStyle {
         Decimal.BPFormatStyle()
     }
 }
+
+extension BPFormatStyle where Self == BPIntegerFormatStyle {
+
+    public static var number: BPIntegerFormatStyle {
+        BPIntegerFormatStyle()
+    }
+}
