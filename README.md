@@ -21,10 +21,10 @@ What's already available and what's to come.
 - [ ] DateComponents
     - [ ] Components
     - [ ] Time Duration
-- [ ] Number
+- [x] Number
     - [x] Decimal
-    - [ ] Float
-    - [ ] Integer
+    - [x] Float
+    - [x] Integer
 - [ ] Currency
     - [ ] Decimal
     - [ ] Float
@@ -68,7 +68,7 @@ All possibilities are not yet fully documented by Apple. Your best bet right now
         My implementation does not do this. This has been reported in FB9165947
 * **Date Interval**
     * All locales except en-US return a 4-digit year. Something seems not quite right yet in Apple's implementation
-* **Decimal**:
+* **Number**:
     * `.rounded()` is currently not implemented because I'm unable to get the same results as Apple
     * `.notation(.compactName)` is excluded because this is something new to Foundation and it cannot be replicated with a `NumberFormatter`
     * Some combinations of specifiers result in different results compared to Apple's implementation... but my implementation does not lose precision while Apple's does... What's up with that?

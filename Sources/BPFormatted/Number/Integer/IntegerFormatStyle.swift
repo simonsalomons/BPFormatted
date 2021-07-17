@@ -71,7 +71,8 @@ public struct BPIntegerFormatStyle: Codable, Hashable {
 
 extension BPIntegerFormatStyle: BPFormatStyle {
 
-    internal static let numberFormatter = NumberFormatter()
+    private static var numberFormatter = NumberFormatter()
+    private static var lastFormatAppliedPrecision = false
     private static let lock = DispatchSemaphore(value: 1)
 
     /// Creates a `FormatOutput` instance from `value`.
@@ -79,14 +80,19 @@ extension BPIntegerFormatStyle: BPFormatStyle {
         Self.lock.wait()
         defer { Self.lock.signal() }
 
-        do {
-            try Self.numberFormatter.applyFormat(collection, locale: locale, value: Decimal(value))
-        } catch {
-            return ""
+        if Self.lastFormatAppliedPrecision && collection.precision == nil {
+            Self.numberFormatter = NumberFormatter()
+        } else if collection.precision != nil {
+            Self.lastFormatAppliedPrecision = true
         }
 
-        let number = NSNumber(value: value)
-        return Self.numberFormatter.string(from: number) ?? "\(value)"
+        do {
+            try Self.numberFormatter.applyFormat(collection, locale: locale, value: Decimal(value), applyPrecisionIfOmitted: false)
+        } catch {
+            return "\(value)"
+        }
+
+        return Self.numberFormatter.string(from: value as NSNumber) ?? "\(value)"
     }
 
     /// If the format allows selecting a locale, returns a copy of this format with the new locale set. Default implementation returns an unmodified self.

@@ -19,6 +19,12 @@ final class IntegerTests: XCTestCase {
     func testGeneral() {
         let integer = 123_456
 
+        XCTAssertEqual(Int32(integer).bpFormatted(),
+                       Int32(integer).formatted())
+
+        XCTAssertEqual(integer.bpFormatted(),
+                       integer.formatted())
+
         XCTAssertEqual(integer.bpFormatted(.number),
                        integer.formatted(.number))
 
@@ -409,7 +415,7 @@ final class IntegerTests: XCTestCase {
         try assertInteroperability(.number.scale(5).notation(.scientific),
                                    .number.scale(5).notation(.scientific))
 
-#warning("🆘 Apple's own api cannot decode a Decimal.FormatStyle that has the integerAndFractionLength modifier :/")
+#warning("🆘 Apple's own api cannot decode a IntegerFormatStyle that has the integerAndFractionLength modifier :/")
 //        try assertInteroperability(.number.precision(.integerAndFractionLength(integerLimits: 0...20, fractionLimits: ...20)),
 //                                   .number.precision(.integerAndFractionLength(integerLimits: 0...20, fractionLimits: ...20)))
 

@@ -14,7 +14,8 @@ internal extension NumberFormatter {
         case maxIntegerTooBig
     }
 
-    func applyFormat(_ collection: BPNumberFormatStyleCollection, locale: Locale, value: Decimal) throws {
+    func applyFormat(_ collection: BPNumberFormatStyleCollection, locale: Locale, value: Decimal, applyPrecisionIfOmitted: Bool) throws {
+        // Notation
         switch collection.notation?.option ?? .automatic {
         case .automatic:
             self.numberStyle = .decimal
@@ -28,7 +29,9 @@ internal extension NumberFormatter {
         // Otherwise the first result will get unexpected results
 
         // Precision
-        try self.applyPrecision(collection.precision?.option ?? .default, forDecimal: value)
+        if applyPrecisionIfOmitted || collection.precision != nil {
+            try self.applyPrecision(collection.precision?.option ?? .default, forDecimal: value)
+        }
 
         // Locale
         if locale == .autoupdatingCurrent {
@@ -77,27 +80,26 @@ internal extension NumberFormatter {
         minimumSignificantDigits = -1
 
         var maxInteger = maxInteger ?? 999
-        let maxFractional = maxFractional ?? 999
         let minInteger = minInteger ?? 0
-        let exponent = max(0, -decimal.exponent)
+        let defaultDecimalPlaces = getNumberOfDecimalPlaces(decimal as NSDecimalNumber)
 
         guard maxInteger < 1_000 else {
             throw PrecisionError.maxIntegerTooBig
-        }
-
-        guard maxFractional < 1_000 else {
-            throw PrecisionError.maxFractionalTooBig
         }
 
         if minInteger == 0 && maxInteger == 0 {
             maxInteger = 999
         }
 
-        if maxFractional > exponent {
-            maximumFractionDigits = minFractional ?? .max
+        if let maxFractional = maxFractional {
+            guard maxFractional < 1_000 else {
+                throw PrecisionError.maxFractionalTooBig
+            }
+            maximumFractionDigits = min(maxFractional, defaultDecimalPlaces)
         } else {
-            maximumFractionDigits = maxFractional
+            maximumFractionDigits = defaultDecimalPlaces
         }
+
         minimumFractionDigits = minFractional ?? 0
         minimumIntegerDigits = max(minInteger, 1)
         maximumIntegerDigits = maxInteger
@@ -118,5 +120,29 @@ internal extension NumberFormatter {
 
         maximumSignificantDigits = maxSignificant
         minimumSignificantDigits = minSignificant
+    }
+
+    private static let decimalPlacesFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.decimalSeparator = "."
+        formatter.minimumIntegerDigits = 1
+        return formatter
+    }()
+    private static let lock = DispatchSemaphore(value: 1)
+
+    func getNumberOfDecimalPlaces(_ number: NSNumber) -> Int {
+        Self.lock.wait()
+        defer { Self.lock.signal() }
+
+        let exponent = max(abs(number.decimalValue.exponent), 0)
+        Self.decimalPlacesFormatter.maximumFractionDigits = exponent + 10
+        Self.decimalPlacesFormatter.minimumFractionDigits = exponent + 10
+
+        return Self.decimalPlacesFormatter.string(from: number)?
+            .trimmingCharacters(in: CharacterSet(charactersIn: "0"))
+            .components(separatedBy: ".")
+            .last?
+            .count ?? exponent
     }
 }

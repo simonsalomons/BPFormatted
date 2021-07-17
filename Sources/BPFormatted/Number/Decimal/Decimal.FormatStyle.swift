@@ -74,7 +74,7 @@ extension Decimal {
 
 extension Decimal.BPFormatStyle: BPFormatStyle {
 
-    internal static let numberFormatter = NumberFormatter()
+    private static let numberFormatter = NumberFormatter()
     private static let lock = DispatchSemaphore(value: 1)
 
     /// Creates a `FormatOutput` instance from `value`.
@@ -83,9 +83,9 @@ extension Decimal.BPFormatStyle: BPFormatStyle {
         defer { Self.lock.signal() }
 
         do {
-            try Self.numberFormatter.applyFormat(collection, locale: locale, value: value)
+            try Self.numberFormatter.applyFormat(collection, locale: locale, value: value, applyPrecisionIfOmitted: true)
         } catch {
-            return ""
+            return "\(value)"
         }
 
         let number = NSDecimalNumber(decimal: value)

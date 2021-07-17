@@ -19,6 +19,9 @@ final class DecimalTests: XCTestCase {
     func testGeneral() {
         let decimal = Decimal(100_000.123_456)
 
+        XCTAssertEqual(decimal.bpFormatted(),
+                       decimal.formatted())
+
         XCTAssertEqual(decimal.bpFormatted(.number),
                        decimal.formatted(.number))
 
@@ -225,6 +228,8 @@ final class DecimalTests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testPrecisionFractional() {
         let decimal = Decimal(123_456.123_456)
+
+        print(decimal.bpFormatted(.number.precision(.fractionLength(20))))
 
         XCTAssertEqual(decimal.bpFormatted(.number.precision(.fractionLength(0))),
                        decimal.formatted(.number.precision(.fractionLength(0))))

@@ -71,3 +71,10 @@ extension BPFormatStyle where Self == BPIntegerFormatStyle {
         BPIntegerFormatStyle()
     }
 }
+
+extension BPFormatStyle where Self == BPFloatingPointFormatStyle {
+
+    public static var number: BPFloatingPointFormatStyle {
+        BPFloatingPointFormatStyle()
+    }
+}
