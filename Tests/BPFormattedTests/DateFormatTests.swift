@@ -130,7 +130,6 @@ final class DateFormatTests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(.dateTime.quarter(.twoDigits)),
                        date.formatted(.dateTime.quarter(.twoDigits)))
 
-        #warning("🆘 Apple's api says '2nd Quarter' is the correct output for '.narrow'. This was reported in FB9165857")
         XCTAssertEqual(date.bpFormatted(.dateTime.quarter(.narrow)),
                        date.formatted(.dateTime.quarter(.narrow)))
 

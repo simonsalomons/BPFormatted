@@ -19,6 +19,9 @@ final class DecimalTests: XCTestCase {
     func testGeneral() {
         let decimal = Decimal(100_000.123_456)
 
+        XCTAssertEqual(decimal.bpFormatted(),
+                       decimal.formatted())
+
         XCTAssertEqual(decimal.bpFormatted(.number),
                        decimal.formatted(.number))
 
@@ -100,18 +103,18 @@ final class DecimalTests: XCTestCase {
     func testGrouping() {
         let decimal = Decimal(100_000.123_456)
 
+        XCTAssertEqual(decimal.bpFormatted(.number.grouping(.never)),
+                       decimal.formatted(.number.grouping(.never)))
+
+        XCTAssertEqual(decimal.bpFormatted(.number.grouping(.automatic)),
+                       decimal.formatted(.number.grouping(.automatic)))
+
         let usa = Locale(identifier: "en-US")
         XCTAssertEqual(decimal.bpFormatted(.number.locale(usa).grouping(.never)),
                        decimal.formatted(.number.locale(usa).grouping(.never)))
 
         XCTAssertEqual(decimal.bpFormatted(.number.locale(usa).grouping(.automatic)),
                        decimal.formatted(.number.locale(usa).grouping(.automatic)))
-
-        XCTAssertEqual(decimal.bpFormatted(.number.grouping(.never)),
-                       decimal.formatted(.number.grouping(.never)))
-
-        XCTAssertEqual(decimal.bpFormatted(.number.grouping(.automatic)),
-                       decimal.formatted(.number.grouping(.automatic)))
 
         let france = Locale(identifier: "fr-FR")
         XCTAssertEqual(decimal.bpFormatted(.number.locale(france).grouping(.never)),
@@ -159,11 +162,9 @@ final class DecimalTests: XCTestCase {
         XCTAssertEqual(decimal.bpFormatted(.number.precision(.significantDigits(-100..<(-50)))),
                        decimal.formatted(.number.precision(.significantDigits(-100..<(-50)))))
 
-#warning("🆘 Apple's API loses decimal precision in this output")
         XCTAssertEqual(decimal.bpFormatted(.number.precision(.significantDigits(0...))),
                        decimal.formatted(.number.precision(.significantDigits(0...))))
 
-#warning("🆘 Apple's API loses decimal precision in this output")
         XCTAssertEqual(decimal.bpFormatted(.number.precision(.significantDigits(20...))),
                        decimal.formatted(.number.precision(.significantDigits(20...))))
     }
@@ -227,6 +228,8 @@ final class DecimalTests: XCTestCase {
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testPrecisionFractional() {
         let decimal = Decimal(123_456.123_456)
+
+        print(decimal.bpFormatted(.number.precision(.fractionLength(20))))
 
         XCTAssertEqual(decimal.bpFormatted(.number.precision(.fractionLength(0))),
                        decimal.formatted(.number.precision(.fractionLength(0))))
