@@ -11,7 +11,7 @@ import Foundation
 @available(macOS, deprecated: 12.0, message: "Consider using Apple's API", renamed: "FloatingPointFormatStyle")
 @available(tvOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "FloatingPointFormatStyle")
 @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "FloatingPointFormatStyle")
-public struct BPFloatingPointFormatStyle : Codable, Hashable {
+public struct BPFloatingPointFormatStyle<Value> : Codable, Hashable where Value: BinaryFloatingPoint {
 
     public var locale: Locale
     internal var collection = BPNumberFormatStyleCollection()
@@ -22,25 +22,25 @@ public struct BPFloatingPointFormatStyle : Codable, Hashable {
 
     public typealias Configuration = BPNumberFormatStyleConfiguration
 
-    public func grouping(_ group: Configuration.Grouping) -> BPFloatingPointFormatStyle {
+    public func grouping(_ group: BPFloatingPointFormatStyle<Value>.Configuration.Grouping) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.group = group
         return copy
     }
 
-    public func precision(_ p: Configuration.Precision) -> BPFloatingPointFormatStyle {
+    public func precision(_ p: BPFloatingPointFormatStyle<Value>.Configuration.Precision) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.precision = p
         return copy
     }
 
-    public func sign(strategy: Configuration.SignDisplayStrategy) -> BPFloatingPointFormatStyle {
+    public func sign(strategy: BPFloatingPointFormatStyle<Value>.Configuration.SignDisplayStrategy) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.signDisplayStrategy = strategy
         return copy
     }
 
-    public func decimalSeparator(strategy: Configuration.DecimalSeparatorDisplayStrategy) -> BPFloatingPointFormatStyle {
+    public func decimalSeparator(strategy: BPFloatingPointFormatStyle<Value>.Configuration.DecimalSeparatorDisplayStrategy) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.decimalSeparatorStrategy = strategy
         return copy
@@ -48,7 +48,7 @@ public struct BPFloatingPointFormatStyle : Codable, Hashable {
 
     // Excluded for now since I cannot seem to replicate the same results as Apple
     /*
-    public func rounded(rule: Configuration.RoundingRule = .toNearestOrEven, increment: Double? = nil) -> BPFloatingPointFormatStyle {
+    public func rounded(rule: Configuration.RoundingRule = .toNearestOrEven, increment: Double? = nil) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.rounding = rule
         copy.collection.roundingIncrement = increment.map({ RoundingIncrement(integer: $0) })
@@ -56,48 +56,47 @@ public struct BPFloatingPointFormatStyle : Codable, Hashable {
     }
      */
 
-    public func scale(_ multiplicand: Double) -> BPFloatingPointFormatStyle {
+    public func scale(_ multiplicand: Double) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.scale = multiplicand
         return copy
     }
 
-    public func notation(_ notation: Configuration.Notation) -> BPFloatingPointFormatStyle {
+    public func notation(_ notation: Configuration.Notation) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.collection.notation = notation
         return copy
     }
 }
 
+private let numberFormatter = NumberFormatter()
+private let lock = DispatchSemaphore(value: 1)
+
 extension BPFloatingPointFormatStyle: BPFormatStyle {
 
-    private static let numberFormatter = NumberFormatter()
-    private static let lock = DispatchSemaphore(value: 1)
-
     /// Creates a `FormatOutput` instance from `value`.
-    public func format(_ value: Double) -> String {
-        Self.lock.wait()
-        defer { Self.lock.signal() }
+    public func format(_ value: Value) -> String {
+        lock.wait()
+        defer { lock.signal() }
 
         do {
-            try Self.numberFormatter.applyFormat(collection, locale: locale, value: Decimal(value), applyPrecisionIfOmitted: true)
+            try numberFormatter.applyFormat(collection, locale: locale, value: value, applyPrecisionIfOmitted: true)
         } catch {
             return "\(value)"
         }
 
-        let number = NSNumber(value: value)
-        return Self.numberFormatter.string(from: number) ?? "\(value)"
+        return numberFormatter.string(from: value) ?? "\(value)"
     }
 
     /// If the format allows selecting a locale, returns a copy of this format with the new locale set. Default implementation returns an unmodified self.
-    public func locale(_ locale: Locale) -> BPFloatingPointFormatStyle {
+    public func locale(_ locale: Locale) -> BPFloatingPointFormatStyle<Value> {
         var copy = self
         copy.locale = locale
         return copy
     }
 
     /// The type of data to format.
-    public typealias FormatInput = Double
+    public typealias FormatInput = Value
 
     /// The type of the formatted data.
     public typealias FormatOutput = String

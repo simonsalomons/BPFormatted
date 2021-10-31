@@ -11,7 +11,7 @@ import Foundation
 @available(macOS, deprecated: 12.0, message: "Consider using Apple's API", renamed: "IntegerFormatStyle")
 @available(tvOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "IntegerFormatStyle")
 @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "IntegerFormatStyle")
-public struct BPIntegerFormatStyle: Codable, Hashable {
+public struct BPIntegerFormatStyle<Value>: Codable, Hashable where Value: BinaryInteger {
 
     public var locale: Locale
     internal var collection = BPNumberFormatStyleCollection()
@@ -22,25 +22,25 @@ public struct BPIntegerFormatStyle: Codable, Hashable {
 
     public typealias Configuration = BPNumberFormatStyleConfiguration
 
-    public func grouping(_ group: Configuration.Grouping) -> BPIntegerFormatStyle {
+    public func grouping(_ group: BPIntegerFormatStyle<Value>.Configuration.Grouping) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.group = group
         return copy
     }
 
-    public func precision(_ p: Configuration.Precision) -> BPIntegerFormatStyle {
+    public func precision(_ p: BPIntegerFormatStyle<Value>.Configuration.Precision) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.precision = p
         return copy
     }
 
-    public func sign(strategy: Configuration.SignDisplayStrategy) -> BPIntegerFormatStyle {
+    public func sign(strategy: BPIntegerFormatStyle<Value>.Configuration.SignDisplayStrategy) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.signDisplayStrategy = strategy
         return copy
     }
 
-    public func decimalSeparator(strategy: Configuration.DecimalSeparatorDisplayStrategy) -> BPIntegerFormatStyle {
+    public func decimalSeparator(strategy: BPIntegerFormatStyle<Value>.Configuration.DecimalSeparatorDisplayStrategy) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.decimalSeparatorStrategy = strategy
         return copy
@@ -56,43 +56,43 @@ public struct BPIntegerFormatStyle: Codable, Hashable {
     }
      */
 
-    public func scale(_ multiplicand: Double) -> BPIntegerFormatStyle{
+    public func scale(_ multiplicand: Double) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.scale = multiplicand
         return copy
     }
 
-    public func notation(_ notation: Configuration.Notation) -> BPIntegerFormatStyle {
+    public func notation(_ notation: BPIntegerFormatStyle<Value>.Configuration.Notation) -> BPIntegerFormatStyle<Value> {
         var copy = self
         copy.collection.notation = notation
         return copy
     }
 }
 
+private var numberFormatter = NumberFormatter()
+private var lastFormatAppliedPrecision = false
+private let lock = DispatchSemaphore(value: 1)
+
 extension BPIntegerFormatStyle: BPFormatStyle {
 
-    private static var numberFormatter = NumberFormatter()
-    private static var lastFormatAppliedPrecision = false
-    private static let lock = DispatchSemaphore(value: 1)
-
     /// Creates a `FormatOutput` instance from `value`.
-    public func format(_ value: Int) -> String {
-        Self.lock.wait()
-        defer { Self.lock.signal() }
+    public func format(_ value: Value) -> String {
+        lock.wait()
+        defer { lock.signal() }
 
-        if Self.lastFormatAppliedPrecision && collection.precision == nil {
-            Self.numberFormatter = NumberFormatter()
+        if lastFormatAppliedPrecision && collection.precision == nil {
+            numberFormatter = NumberFormatter()
         } else if collection.precision != nil {
-            Self.lastFormatAppliedPrecision = true
+            lastFormatAppliedPrecision = true
         }
 
         do {
-            try Self.numberFormatter.applyFormat(collection, locale: locale, value: Decimal(value), applyPrecisionIfOmitted: false)
+            try numberFormatter.applyFormat(collection, locale: locale, value: value, applyPrecisionIfOmitted: false)
         } catch {
             return "\(value)"
         }
 
-        return Self.numberFormatter.string(from: value as NSNumber) ?? "\(value)"
+        return numberFormatter.string(from: value) ?? "\(value)"
     }
 
     /// If the format allows selecting a locale, returns a copy of this format with the new locale set. Default implementation returns an unmodified self.
@@ -103,7 +103,7 @@ extension BPIntegerFormatStyle: BPFormatStyle {
     }
 
     /// The type of data to format.
-    public typealias FormatInput = Int
+    public typealias FormatInput = Value
 
     /// The type of the formatted data.
     public typealias FormatOutput = String

@@ -53,7 +53,7 @@ extension Date.BPFormatStyle.Symbol.Hour {
     public static func defaultDigits(amPM: Date.BPFormatStyle.Symbol.Hour.AMPMStyle) -> Date.BPFormatStyle.Symbol.Hour {
         switch amPM.style {
         case .omitted:
-            fatalError("Specified amPM style is not supported by Hour.defaultDigits")
+            return Date.BPFormatStyle.Symbol.Hour(value: "J")
         case .narrow:
             return Date.BPFormatStyle.Symbol.Hour(value: "jjjjj")
         case .abbreviated:
@@ -67,7 +67,7 @@ extension Date.BPFormatStyle.Symbol.Hour {
     public static func twoDigits(amPM: Date.BPFormatStyle.Symbol.Hour.AMPMStyle) -> Date.BPFormatStyle.Symbol.Hour {
         switch amPM.style {
         case .omitted:
-            fatalError("Specified amPM style is not supported by Hour.twoDigits")
+            return Date.BPFormatStyle.Symbol.Hour(value: "JJ")
         case .narrow:
             return Date.BPFormatStyle.Symbol.Hour(value: "jjjjjj")
         case .abbreviated:
@@ -77,19 +77,11 @@ extension Date.BPFormatStyle.Symbol.Hour {
         }
     }
 
-    public static var defaultDigitsNoAMPM: Date.BPFormatStyle.Symbol.Hour {
-        Date.BPFormatStyle.Symbol.Hour(value: "J")
-    }
-
-    public static var twoDigitsNoAMPM: Date.BPFormatStyle.Symbol.Hour {
-        Date.BPFormatStyle.Symbol.Hour(value: "JJ")
-    }
-
     /// Behaves like `defaultDigits`: the preferred numeric hour format for the locale with minimum digits. May also use conversational period formats.
     public static func conversationalDefaultDigits(amPM: Date.BPFormatStyle.Symbol.Hour.AMPMStyle) -> Date.BPFormatStyle.Symbol.Hour {
         switch amPM.style {
         case .omitted:
-            fatalError("Specified amPM style is not supported by Hour.conversationalDefaultDigits")
+            return Date.BPFormatStyle.Symbol.Hour(value: "J")
         case .narrow:
             return Date.BPFormatStyle.Symbol.Hour(value: "CCCCC")
         case .abbreviated:
@@ -103,7 +95,7 @@ extension Date.BPFormatStyle.Symbol.Hour {
     public static func conversationalTwoDigits(amPM: Date.BPFormatStyle.Symbol.Hour.AMPMStyle) -> Date.BPFormatStyle.Symbol.Hour {
         switch amPM.style {
         case .omitted:
-            fatalError("Specified amPM style is not supported by Hour.conversationalTwoDigits")
+            return Date.BPFormatStyle.Symbol.Hour(value: "JJ")
         case .narrow:
             return Date.BPFormatStyle.Symbol.Hour(value: "CCCCCC")
         case .abbreviated:

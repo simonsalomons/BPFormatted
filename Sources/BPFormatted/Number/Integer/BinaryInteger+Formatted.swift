@@ -15,7 +15,7 @@ extension BinaryInteger {
     @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "formatted")
     /// Format `self` using `IntegerFormatStyle()`
     public func bpFormatted() -> String {
-        bpFormatted(BPIntegerFormatStyle())
+        bpFormatted(BPIntegerFormatStyle<Self>())
     }
 
     @available(iOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "formatted")

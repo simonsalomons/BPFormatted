@@ -244,8 +244,8 @@ final class DateFormatTests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(.dateTime.hour()),
                        date.formatted(.dateTime.hour()))
 
-        // Supplying .omitted in any amPM parameter throws a fatalError in Apple's API, so bpFormatted throws a fatalError as well 🤷‍♂️
-        #warning("🆘 Check if Apple will keep a fatalError when supplying .omitted amPM parameter during the bèta period")
+        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.defaultDigits(amPM: .omitted))),
+                       date.formatted(.dateTime.hour(.defaultDigits(amPM: .omitted))))
 
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.defaultDigits(amPM: .narrow))),
                        date.formatted(.dateTime.hour(.defaultDigits(amPM: .narrow))))
@@ -257,6 +257,9 @@ final class DateFormatTests: XCTestCase {
                        date.formatted(.dateTime.hour(.defaultDigits(amPM: .wide))))
 
 
+        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.twoDigits(amPM: .omitted))),
+                       date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted))))
+
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.twoDigits(amPM: .narrow))),
                        date.formatted(.dateTime.hour(.twoDigits(amPM: .narrow))))
 
@@ -267,16 +270,12 @@ final class DateFormatTests: XCTestCase {
                        date.formatted(.dateTime.hour(.twoDigits(amPM: .wide))))
 
 
-        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.defaultDigitsNoAMPM)),
-                       date.formatted(.dateTime.hour(.defaultDigitsNoAMPM)))
-
-
-        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.twoDigitsNoAMPM)),
-                       date.formatted(.dateTime.hour(.twoDigitsNoAMPM)))
-
+        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .omitted))),
+                       date.formatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .omitted))))
 
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .narrow))),
                        date.formatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .narrow))))
+
 
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .abbreviated))),
                        date.formatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .abbreviated))))
@@ -284,6 +283,9 @@ final class DateFormatTests: XCTestCase {
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .wide))),
                        date.formatted(.dateTime.hour(.conversationalDefaultDigits(amPM: .wide))))
 
+
+        XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalTwoDigits(amPM: .omitted))),
+                       date.formatted(.dateTime.hour(.conversationalTwoDigits(amPM: .omitted))))
 
         XCTAssertEqual(date.bpFormatted(.dateTime.hour(.conversationalTwoDigits(amPM: .narrow))),
                        date.formatted(.dateTime.hour(.conversationalTwoDigits(amPM: .narrow))))
@@ -381,7 +383,6 @@ final class DateFormatTests: XCTestCase {
                        date.formatted(.dateTime.timeZone(.iso8601(.long))))
 
 
-#warning("🆘 Apple's api says '' is the correct output for '.localizedGMT(.short)'. This was reported in FB9165947")
         XCTAssertEqual(date.bpFormatted(.dateTime.timeZone(.localizedGMT(.short))),
                        date.formatted(.dateTime.timeZone(.localizedGMT(.short))))
 
@@ -478,8 +479,8 @@ final class DateFormatTests: XCTestCase {
         try assertInteroperability(.dateTime,
                                    .dateTime)
 
-        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM),
-                                   .dateTime.day(.twoDigits).hour(.defaultDigitsNoAMPM))
+        try assertInteroperability(.dateTime.day(.twoDigits).hour(.defaultDigits(amPM: .abbreviated)),
+                                   .dateTime.day(.twoDigits).hour(.defaultDigits(amPM: .abbreviated)))
 
         try assertInteroperability(Date.BPFormatStyle(date: .numeric, time: .shortened),
                                    Date.FormatStyle(date: .numeric, time: .shortened))

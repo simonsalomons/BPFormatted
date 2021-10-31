@@ -117,8 +117,8 @@ final class DateIntervalTests: XCTestCase {
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour()),
                        dateRange.formatted(.interval.hour()))
 
-        // Supplying .omitted in any amPM parameter throws a fatalError in Apple's API, so bpFormatted throws a fatalError as well 🤷‍♂️
-        #warning("🆘 Check if Apple will keep a fatalError when supplying .omitted amPM parameter during the bèta period")
+        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.defaultDigits(amPM: .omitted))),
+                       dateRange.formatted(.interval.hour(.defaultDigits(amPM: .omitted))))
 
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.defaultDigits(amPM: .narrow))),
                        dateRange.formatted(.interval.hour(.defaultDigits(amPM: .narrow))))
@@ -130,6 +130,9 @@ final class DateIntervalTests: XCTestCase {
                        dateRange.formatted(.interval.hour(.defaultDigits(amPM: .wide))))
 
 
+        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.twoDigits(amPM: .omitted))),
+                       dateRange.formatted(.interval.hour(.twoDigits(amPM: .omitted))))
+
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.twoDigits(amPM: .narrow))),
                        dateRange.formatted(.interval.hour(.twoDigits(amPM: .narrow))))
 
@@ -140,13 +143,8 @@ final class DateIntervalTests: XCTestCase {
                        dateRange.formatted(.interval.hour(.twoDigits(amPM: .wide))))
 
 
-        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.defaultDigitsNoAMPM)),
-                       dateRange.formatted(.interval.hour(.defaultDigitsNoAMPM)))
-
-
-        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.twoDigitsNoAMPM)),
-                       dateRange.formatted(.interval.hour(.twoDigitsNoAMPM)))
-
+        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.conversationalDefaultDigits(amPM: .omitted))),
+                       dateRange.formatted(.interval.hour(.conversationalDefaultDigits(amPM: .omitted))))
 
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.conversationalDefaultDigits(amPM: .narrow))),
                        dateRange.formatted(.interval.hour(.conversationalDefaultDigits(amPM: .narrow))))
@@ -157,6 +155,9 @@ final class DateIntervalTests: XCTestCase {
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.conversationalDefaultDigits(amPM: .wide))),
                        dateRange.formatted(.interval.hour(.conversationalDefaultDigits(amPM: .wide))))
 
+
+        XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.conversationalTwoDigits(amPM: .omitted))),
+                       dateRange.formatted(.interval.hour(.conversationalTwoDigits(amPM: .omitted))))
 
         XCTAssertEqual(dateRange.bpFormatted(.interval.hour(.conversationalTwoDigits(amPM: .narrow))),
                        dateRange.formatted(.interval.hour(.conversationalTwoDigits(amPM: .narrow))))
@@ -214,7 +215,6 @@ final class DateIntervalTests: XCTestCase {
                        dateRange.formatted(.interval.timeZone(.iso8601(.long))))
 
 
-#warning("🆘 Apple's api says '' is the correct output for '.localizedGMT(.short)'. This was reported in FB9165947")
 #warning("🆘 For some reason, all timeZones except localizedGMT also format a day, month and year. This localizedGMT seems the only one correctly giving only TimeZone. Let's wait and see what the beta's do.")
         XCTAssertEqual(dateRange.bpFormatted(.interval.timeZone(.localizedGMT(.short))),
                        dateRange.formatted(.interval.timeZone(.localizedGMT(.short))))
@@ -294,8 +294,8 @@ final class DateIntervalTests: XCTestCase {
         try assertInteroperability(.interval,
                                    .interval)
 
-        try assertInteroperability(.interval.day().hour(.defaultDigitsNoAMPM),
-                                   .interval.day().hour(.defaultDigitsNoAMPM))
+        try assertInteroperability(.interval.day().hour(.defaultDigits(amPM: .narrow)),
+                                   .interval.day().hour(.defaultDigits(amPM: .narrow)))
 
         try assertInteroperability(Date.BPIntervalFormatStyle(date: .numeric, time: .shortened),
                                    Date.IntervalFormatStyle(date: .numeric, time: .shortened))

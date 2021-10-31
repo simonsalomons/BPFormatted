@@ -1,100 +1,20 @@
 # BPFormatted
 
-This is a back-port of the `.formatted` API in Foundation that was introduced at WWDC '21 for iOS 15, macOS 12.0, tvOS 15.0, and watchOS 8.0.
+> **DISCONTINUED**: I've stopped working on this project. Read along to know why.
 
-Most developers cannot start developing their apps from those platforms and upwards.
+This was supposed to be a back-port of the `.formatted` API in Foundation that was introduced at WWDC '21 for iOS 15, macOS 12.0, tvOS 15.0, and watchOS 8.0.
+Through some careful observation during the beta period of the framework, I noticed that it still created good old formatter objects in memory and cached them for reuse which made formatting the same things over and over again much more performant.
+This seemed fun to replicate, while also giving me personally some insight into how these api's were built inside Foundation.
+It went great and I did most of DateFormatter, ISO8601DateFormatter, DateIntervalFormatter and NumberFormatter.
+I logged a few radars where I found mistakes in the beta and got some fixed.
+As the beta's went on, things went south and the Foundation team started using lower private api's internally and skipping the abstractions we we're all used to.
+This made it that more and more of the new api I could not replicate in older versions of the OS'es. (Unless I was going to write my own DateFormatter and that is NOT a good idea. No, just no.)
+Since all my unit tests were built on the fact that it compares the result of my .bpFormatted api with Apple's .formatted api, more and more started failing as the beta's went on and I couldn't do anything about it.
+I decided to wait until the final release to take a second look.
+As expected, the result was that most of what I built didn't match with what was finally released. What's worse is that I found that the regular Formatter's produce different results on different platforms, which really should not happen.
+I tried fixing things, but ultimately there is no perfect solution to make it work on all platforms. If I fix the test for iOS, it will fail for macOS and visa versa. I really don't want to do a bunch of #if iOS else if macOS etc.
 
-But now they can! This package provides the same nice api for projects starting at **iOS 9.0, macOS 10.10, tvOS 9.0 and watchOS 2.0**!!!
-
-## Goal
-
-To provide the exact same api with the exact same results as Apple's Foundation api.
-
-## Features
-
-What's already available and what's to come.
-
-- [x] Date
-- [x] ISO8601 (iOS 10, macOS 10.12, watchOS 3, tvOS 10)
-- [x] DateInterval
-- [x] Relative Dates (iOS 15, macOS 10.15, watchOS 6, tvOS 13)
-- [ ] DateComponents
-    - [ ] Components
-    - [ ] Time Duration
-- [x] Number
-    - [x] Decimal
-    - [x] Float
-    - [x] Integer
-- [ ] Currency
-    - [ ] Decimal
-    - [ ] Float
-    - [ ] Integer
-- [ ] Percent
-    - [ ] Decimal
-    - [ ] Float
-    - [ ] Integer
-- [ ] Measurement
-- [ ] List
-- [ ] PersonNameComponent
-- [ ] RelativeDate
-- [ ] ByteCount
-- [ ] String parsing (maybe)
-
-## How to use
-
-The same API as in Apple's Foundation framework, but prefixed with `bp`.
-
-```swift
-// Apple's Foundation
-Date().formatted()
-Date().formatted(.dateTime.month().year(.twoDigits))
-(Date()..<Date()).formatted(.interval.year())
-// BPFormatted
-Date().bpFormatted()
-Date().bpFormatted(.dateTime.month().year(.twoDigits))
-(Date()..<Date()).bpFormatted(.interval.year())
-```
-
-You will get automatic compiler warnings if you try to use this framework when your minimum deployment already allows you to use Apple's official API.
-
-All possibilities are not yet fully documented by Apple. Your best bet right now is to watch [What's new in Foundation (WWDC 2021)](https://developer.apple.com/videos/play/wwdc2021/10109/) starting at 14:30.
-
-## Known issues
-
-* **Date**
-    * Requesting `.quarter(.narrow)` in Apple's api results in `"2nd Quarter"` while it should be `"2"`.
-        My implementation does not do this. This has been reported in FB9165857
-    * Requesting `.localizedGMT(.short)` in Apple's api results in `""` while it should be something like `"GMT+2"`
-        My implementation does not do this. This has been reported in FB9165947
-* **Date Interval**
-    * All locales except en-US return a 4-digit year. Something seems not quite right yet in Apple's implementation
-* **Number**:
-    * `.rounded()` is currently not implemented because I'm unable to get the same results as Apple
-    * `.notation(.compactName)` is excluded because this is something new to Foundation and it cannot be replicated with a `NumberFormatter`
-    * Some combinations of specifiers result in different results compared to Apple's implementation... but my implementation does not lose precision while Apple's does... What's up with that?
-      You can check the tests in `DecimalTests.swift` to see which combinations.
-
-## Warning
-
-* Since the current release of `Foundation` this is based on is still in bèta, everything is still subject to change.
-* To use the same syntax as the new API, you need to use Swift 5.5, otherwise, a longer form will be necessary.
-```
-// Swift 5.5
-Date().bpFormatted(.dateTime)
-// Swift 5.x
-Date().bpFormatted(Date.BPFormatStyle.dateTime)
-```
-* This is my first open source project. If you have any suggestions/improvements, I am open-minded.
-
-## Installation
-SPM:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/simonsalomons/BPFormatted.git", .upToNextMajor(from: "0.0.1"))
-]
-```
-
-CocoaPods:
-
-TBA
+Is it really worth all this trouble to have this api available a few versions earlier while a developer could very easily get this performance boost themselves by not creating Formatter's willy nilly? No, it's not.
+And to be honest, I have other projects I'd rather be working on than this endless nightmare that really would not add that much value.
+In the end, I learned things from inspecting Apple's api and its evolution during a beta period. I also still look forward to using it whenever I start a project with minimum deployment of iOS 15, perhaps in 2023.
+If you stumble across this, feel free to do with it what you will. It compiles, but I can no longer vouch for the results.

@@ -15,7 +15,7 @@ extension BinaryFloatingPoint {
     @available(watchOS, deprecated: 8.0, message: "Consider using Apple's API", renamed: "formatted")
     /// Format `self` with `FloatingPointFormatStyle()`.
     public func bpFormatted() -> String {
-        bpFormatted(BPFloatingPointFormatStyle())
+        bpFormatted(BPFloatingPointFormatStyle<Self>())
     }
 
     @available(iOS, deprecated: 15.0, message: "Consider using Apple's API", renamed: "formatted")

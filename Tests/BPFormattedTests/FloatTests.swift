@@ -411,29 +411,29 @@ final class FloatTests: XCTestCase {
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     func testInteroperability() throws {
-        try assertInteroperability(.number,
-                                   .number)
+        try assertInteroperability(BPFloatingPointFormatStyle<Double>.number,
+                                   FloatingPointFormatStyle<Double>.number)
 
-        try assertInteroperability(.number.scale(5).notation(.scientific),
-                                   .number.scale(5).notation(.scientific))
+        try assertInteroperability(BPFloatingPointFormatStyle<Double>.number.scale(5).notation(.scientific),
+                                   FloatingPointFormatStyle<Double>.number.scale(5).notation(.scientific))
 
 #warning("🆘 Apple's own api cannot decode a FloatingPointFormatStyle that has the integerAndFractionLength modifier :/")
 //        try assertInteroperability(.number.precision(.integerAndFractionLength(integerLimits: 0...20, fractionLimits: ...20)),
 //                                   .number.precision(.integerAndFractionLength(integerLimits: 0...20, fractionLimits: ...20)))
 
-        try assertInteroperability(.number.precision(.significantDigits(6)),
-                                   .number.precision(.significantDigits(6)))
+        try assertInteroperability(BPFloatingPointFormatStyle<Double>.number.precision(.significantDigits(6)),
+                                   FloatingPointFormatStyle<Double>.number.precision(.significantDigits(6)))
 
-        try assertInteroperability(.number.scale(5).notation(.scientific).decimalSeparator(strategy: .always).grouping(.never).precision(.significantDigits(0...20)).sign(strategy: .never),
-                                   .number.scale(5).notation(.scientific).decimalSeparator(strategy: .always).grouping(.never).precision(.significantDigits(0...20)).sign(strategy: .never))
+        try assertInteroperability(BPFloatingPointFormatStyle<Double>.number.scale(5).notation(.scientific).decimalSeparator(strategy: .always).grouping(.never).precision(.significantDigits(0...20)).sign(strategy: .never),
+                                   FloatingPointFormatStyle<Double>.number.scale(5).notation(.scientific).decimalSeparator(strategy: .always).grouping(.never).precision(.significantDigits(0...20)).sign(strategy: .never))
 
         let locale = Locale(identifier: "en-US")
-        try assertInteroperability(BPFloatingPointFormatStyle(locale: locale),
-                                   FloatingPointFormatStyle(locale: locale))
+        try assertInteroperability(BPFloatingPointFormatStyle<Double>(locale: locale),
+                                   FloatingPointFormatStyle<Double>(locale: locale))
     }
 
     @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-    func assertInteroperability(_ bpFormat: BPFloatingPointFormatStyle, _ format: FloatingPointFormatStyle) throws {
+    func assertInteroperability<Value: BinaryFloatingPoint>(_ bpFormat: BPFloatingPointFormatStyle<Value>, _ format: FloatingPointFormatStyle<Value>) throws {
         let double: Double = 123_456.123_456
 
         let bpEncoded = try JSONEncoder().encode(bpFormat)
@@ -447,7 +447,7 @@ final class FloatTests: XCTestCase {
         XCTAssertEqual(bpSortedKeys, appleSortedKeys)
 
         // Check if Apple can decode an encoded BPFormatStyle and compare the formatted result
-        let appleDecoded = try JSONDecoder().decode(FloatingPointFormatStyle.self, from: bpEncoded)
+        let appleDecoded = try JSONDecoder().decode(FloatingPointFormatStyle<Value>.self, from: bpEncoded)
         XCTAssertEqual(double.bpFormatted(bpFormat),
                        double.formatted(appleDecoded))
     }

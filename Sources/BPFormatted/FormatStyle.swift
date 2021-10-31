@@ -59,22 +59,82 @@ extension BPFormatStyle where Self == Date.BPRelativeFormatStyle {
 }
 
 extension BPFormatStyle where Self == Decimal.BPFormatStyle {
-
     public static var number: Decimal.BPFormatStyle {
         Decimal.BPFormatStyle()
     }
 }
 
-extension BPFormatStyle where Self == BPIntegerFormatStyle {
-
-    public static var number: BPIntegerFormatStyle {
+extension BPFormatStyle where Self == BPIntegerFormatStyle<Int> {
+    public static var number: BPIntegerFormatStyle<Int> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<Int16> {
+    public static var number: BPIntegerFormatStyle<Int16> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<Int32> {
+    public static var number: BPIntegerFormatStyle<Int32> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<Int64> {
+    public static var number: BPIntegerFormatStyle<Int64> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<Int8> {
+    public static var number: BPIntegerFormatStyle<Int8> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<UInt> {
+    public static var number: BPIntegerFormatStyle<UInt> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<UInt16> {
+    public static var number: BPIntegerFormatStyle<UInt16> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<UInt32> {
+    public static var number: BPIntegerFormatStyle<UInt32> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<UInt64> {
+    public static var number: BPIntegerFormatStyle<UInt64> {
+        BPIntegerFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPIntegerFormatStyle<UInt8> {
+    public static var number: BPIntegerFormatStyle<UInt8> {
         BPIntegerFormatStyle()
     }
 }
 
-extension BPFormatStyle where Self == BPFloatingPointFormatStyle {
-
-    public static var number: BPFloatingPointFormatStyle {
+extension BPFormatStyle where Self == BPFloatingPointFormatStyle<Double> {
+    public static var number: BPFloatingPointFormatStyle<Double> {
         BPFloatingPointFormatStyle()
+    }
+}
+extension BPFormatStyle where Self == BPFloatingPointFormatStyle<Float> {
+    public static var number: BPFloatingPointFormatStyle<Float> {
+        BPFloatingPointFormatStyle()
+    }
+}
+
+//extension BPFormatStyle where Self == Decimal.BPFormatStyle.Currency {
+//
+//    public static func currency(code: String) -> Self {
+//
+//    }
+//}
+
+extension BPFormatStyle {
+    public static func currency<V>(code: String) -> Self where Self == BPIntegerFormatStyle<V>.Currency, V: BinaryInteger {
+        BPIntegerFormatStyle.Currency(code: code)
     }
 }
